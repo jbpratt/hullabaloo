@@ -5,7 +5,6 @@ const int SCREEN_HEIGHT = 560;
 const int SCREEN_WIDTH = 960;
 
 int main(int argc, char *args[]) {
-
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
     printf("SDL_Init Error: %s\n", SDL_GetError());
     exit(1);
@@ -35,16 +34,30 @@ int main(int argc, char *args[]) {
 
   SDL_Texture *tex = SDL_CreateTextureFromSurface(ren, screen);
   SDL_FreeSurface(screen);
-  if (tex == NULL ){
+  if (tex == NULL) {
     printf("SDL_CreateTextureFromSurface Error: %s\n", SDL_GetError());
     exit(1);
   }
 
-  for(int i =0; i <3; i++) {
+  SDL_Event e;
+  while (1) {
+    while (SDL_PollEvent(&e)) {
+      switch (e.type) {
+        case SDL_KEYDOWN:
+          printf("keydown\n");
+          break;
+        case SDL_QUIT:
+          break;
+        case SDL_MOUSEBUTTONDOWN:
+          printf("i do know what that is\n");
+          break;
+        default:
+          printf("hmm\n");
+      }
+    }
     SDL_RenderClear(ren);
-    SDL_RenderCopy(ren,tex,NULL,NULL);
+    SDL_RenderCopy(ren, tex, NULL, NULL);
     SDL_RenderPresent(ren);
-    SDL_Delay(1000);
   }
 
   SDL_DestroyTexture(tex);

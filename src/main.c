@@ -7,6 +7,10 @@
 typedef struct {
   SDL_Renderer *renderer;
   SDL_Window *window;
+  int up;
+  int down;
+  int left;
+  int right;
 } App;
 
 typedef struct {
@@ -71,6 +75,40 @@ void initSDL(void) {
   IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
 }
 
+void handleKeyUp(SDL_KeyboardEvent *event) {
+  if (event->repeat == 0) {
+    if (event->keysym.scancode == SDL_SCANCODE_UP) {
+      app.up = 0;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_DOWN) {
+      app.down = 0;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_LEFT) {
+      app.left = 0;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_RIGHT) {
+      app.right = 0;
+    }
+  }
+}
+
+void handleKeyDown(SDL_KeyboardEvent *event) {
+  if (event->repeat == 0) {
+    if (event->keysym.scancode == SDL_SCANCODE_UP) {
+      app.up = 1;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_DOWN) {
+      app.down = 1;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_LEFT) {
+      app.left = 1;
+    }
+    if (event->keysym.scancode == SDL_SCANCODE_RIGHT) {
+      app.right = 1;
+    }
+  }
+}
+
 void cleanup(void) {
   SDL_DestroyRenderer(app.renderer);
   SDL_DestroyWindow(app.window);
@@ -91,6 +129,12 @@ void handleInput(void) {
       case SDL_QUIT:
         exit(0);
         break;
+      case SDL_KEYDOWN:
+        handleKeyDown(&event.key);
+        break;
+      case SDL_KEYUP:
+        handleKeyUp(&event.key);
+        break;
       default:
         break;
     }
@@ -110,6 +154,20 @@ int main(int argc, char *argv[]) {
   while (1) {
     createScene();
     handleInput();
+
+    if (app.up) {
+      police.y -= 4;
+    }
+    if (app.down) {
+      police.y += 4;
+    }
+    if (app.left) {
+      police.x -= 4;
+    }
+    if (app.right) {
+      police.x += 4;
+    }
+
     drawTex(police.texture, police.x, police.y);
     presentScene();
     SDL_Delay(16);
